@@ -1,0 +1,62 @@
+{
+  "name": "@css-blocks/bem-to-blocks",
+  "author": "Ramitha Chitloor",
+  "description": "Tools to convert BEM files to CSS block files.",
+  "license": "BSD-2-Clause",
+  "version": "1.2.0",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "files": [
+    "bin",
+    "dist",
+    "src",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "readme": "README.md",
+  "keywords": [
+    "tslint",
+    "tslint-plugin"
+  ],
+  "scripts": {
+    "test": "yarn run test:runner",
+    "test:runner": "mocha --opts test/mocha.opts dist/test",
+    "compile": "tsc --build",
+    "pretest": "yarn run compile",
+    "posttest": "yarn run lint",
+    "prepublish": "rm -rf dist && yarn run compile && yarn run lintall",
+    "lint": "tslint -t msbuild --project . -c tslint.cli.json",
+    "lintall": "tslint -t msbuild --project . -c tslint.release.json",
+    "lintfix": "tslint -t msbuild --project . -c tslint.cli.json --fix",
+    "coverage": "istanbul cover -i dist/src/**/*.js --dir ./build/coverage node_modules/mocha/bin/_mocha -- dist/test --opts test/mocha.opts",
+    "remap": "remap-istanbul -i build/coverage/coverage.json -o coverage -t html",
+    "watch": "watch 'yarn run test' src test --wait=1"
+  },
+  "bugs": {
+    "url": "https://github.com/linkedin/css-blocks/issues"
+  },
+  "repository": "https://github.com/linkedin/css-blocks/tree/master/packages/%40css-blocks/bem-to-blocks",
+  "homepage": "https://github.com/linkedin/css-blocks/tree/master/packages/%40css-blocks/bem-to-blocks#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "inquirer": "^7.0.3",
+    "postcss": "^7.0.14",
+    "postcss-selector-parser": "^6.0.2",
+    "postcss-simple-vars": "^5.0.2"
+  },
+  "engines": {
+    "node": "10.* || >= 12.*"
+  },
+  "volta": {
+    "node": "12.2.0",
+    "yarn": "1.21.0"
+  },
+  "devDependencies": {
+    "@css-blocks/code-style": "^1.2.0",
+    "@types/inquirer": "^6.5.0",
+    "@types/sinon": "^7.5.1",
+    "sinon": "^8.0.4"
+  }
+}

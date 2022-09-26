@@ -1,0 +1,11 @@
+:scope {
+   font-size: 18px;
+}
+
+.emphasis {
+    font-style: italic;
+}
+
+.emphasis[extra] {
+    font-weight: bold;
+}

@@ -1,0 +1,49 @@
+{
+  "private": true,
+  "name": "css-blocks-ember",
+  "publisher": "css-blocks",
+  "description": "VSCode Extension for CSS Blocks + Ember",
+  "author": "LinkedIn",
+  "license": "BSD-2-Clause",
+  "version": "1.5.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LinkedIn/css-blocks"
+  },
+  "engines": {
+    "vscode": "^1.33.0"
+  },
+  "activationEvents": [
+    "onLanguage:handlebars",
+    "onLanguage:scss",
+    "onLanguage:css"
+  ],
+  "contributes": {
+    "css": {
+      "customData": [
+        "./css-blocks.css-data.json"
+      ]
+    }
+  },
+  "main": "./dist/extension",
+  "scripts": {
+    "vscode:prepublish": "npx -p typescript@~3.8 tsc",
+    "update-vscode": "vscode-install",
+    "postinstall": "vscode-install || echo 'failed to install vscode for local development.'",
+    "compile": "tsc --build",
+    "watch": "tsc --build --watch",
+    "package": "rm -rf node_modules && npm install --only=production && npx vsce package"
+  },
+  "dependencies": {
+    "@css-blocks/language-server": "^1.5.0",
+    "regjsparser": "0.6.0",
+    "vscode-languageclient": "^5.2.1"
+  },
+  "devDependencies": {
+    "vscode": "^1.1.35"
+  },
+  "volta": {
+    "node": "12.2.0",
+    "yarn": "1.21.0"
+  }
+}

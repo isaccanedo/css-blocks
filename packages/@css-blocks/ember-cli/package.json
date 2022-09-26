@@ -1,0 +1,46 @@
+{
+  "version": "1.5.0",
+  "name": "@css-blocks/ember-cli",
+  "description": "Use CSS Blocks with your Ember and Glimmer projects.",
+  "keywords": [
+    "ember-addon"
+  ],
+  "license": "BSD-2-Clause",
+  "author": "Adam Miller <ammiller@linkedin.com>",
+  "repository": "https://github.com/linkedin/css-blocks/tree/master/packages/%40css-blocks/ember-cli",
+  "homepage": "https://github.com/linkedin/css-blocks/tree/master/packages/%40css-blocks/ember-cli#readme",
+  "scripts": {
+    "test": "echo 'To test this package: cd ../../../private-packages/fixtures/ember-app && yarn test'"
+  },
+  "dependencies": {
+    "@css-blocks/broccoli": "^1.5.0",
+    "@css-blocks/config": "^1.5.0",
+    "@css-blocks/glimmer": "^1.5.0",
+    "@glimmer/application-pipeline": "^0.15.0",
+    "broccoli-concat": "^3.7.3",
+    "broccoli-funnel": "^2.0.1",
+    "broccoli-merge-trees": "^3.0.2",
+    "debug": "^4.1.1",
+    "ember-cli-babel": "7.11.0",
+    "fs-extra": "^8.0.0",
+    "lodash.merge": "^4.6.2",
+    "symlink-or-copy": "^1.2.0"
+  },
+  "engines": {
+    "node": "10.* || >= 12.*"
+  },
+  "ember-addon": {
+    "before": [
+      "ember-cli-babel",
+      "ember-cli-htmlbars"
+    ],
+    "after": [
+      "ember-cli-sass",
+      "ember-cli-eyeglass"
+    ]
+  },
+  "volta": {
+    "node": "12.2.0",
+    "yarn": "1.21.0"
+  }
+}

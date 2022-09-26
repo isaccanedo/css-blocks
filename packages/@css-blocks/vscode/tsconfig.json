@@ -1,0 +1,12 @@
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "composite": true,
+    "baseUrl": "dist",
+    "outDir": "dist",
+    "rootDir": "src",
+  },
+  "include": ["src", "test"],
+  "exclude": ["dist", "node_modules", ".vscode-test"],
+  "references": [{ "path": "../language-server" }]
+}

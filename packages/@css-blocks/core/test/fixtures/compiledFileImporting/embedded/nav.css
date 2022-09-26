@@ -1,0 +1,19 @@
+/* This is a test compiled css file. */
+/*#css-blocks 7d97e*/
+.nav-7d97e {
+  display: flex;
+}
+.nav-7d97e__entry {
+  flex: 1;
+}
+.nav-7d97e__entry--active {
+  font-weight: bold;
+}
+.nav-7d97e__entry--active.link-3c287 {
+  font-weight: bold;
+}
+.nav-7d97e__entry:hover {
+  text-shadow: 2px 2px 1px;
+}
+/*#blockDefinitionURL=data:text/css;base64,QGJsb2NrLXN5bnRheC12ZXJzaW9uIDE7CkBibG9jayBsaW5rIGZyb20gIi4uL3NoYXJlZC9saW5rLmJsb2NrLmNzcyI7CkBibG9jayBsaXN0IGZyb20gIi4uL3NoYXJlZC9saXN0LmJsb2NrLmNzcyI7CkBleHBvcnQgaXRlbSBmcm9tICIuLi9zaGFyZWQvaXRlbS5ibG9jay5jc3MiOwoKOnNjb3BlIHsKICBibG9jay1pZDogIjdkOTdlIjsKICBibG9jay1jbGFzczogbmF2LTdkOTdlOwogIGJsb2NrLWFsaWFzOiB0b3AtbmF2OwogIGJsb2NrLW5hbWU6IG5hdjsKICBleHRlbmRzOiBsaXN0OwogIGluaGVyaXRlZC1zdHlsZXM6ICJsaXN0W3R5cGU9b3JkZXJlZF0iIDEsICJsaXN0W3R5cGU9dW5vcmRlcmVkXSIgMiwgImxpc3RbdHlwZT1pbmxpbmVdIiAzLCAibGlzdFt0eXBlPWhvcml6b250YWxdIiA0LCAibGlzdC5pdGVtIiA1LCAibGlzdC5pdGVtW2xhc3RdIiA2Owp9CgouZW50cnkgewogIGJsb2NrLWFsaWFzOiB0b3AtbmF2LWVudHJ5OwogIGJsb2NrLWNsYXNzOiBuYXYtN2Q5N2VfX2VudHJ5Owp9CgouZW50cnlbYWN0aXZlXSB7CiAgYmxvY2stY2xhc3M6IG5hdi03ZDk3ZV9fZW50cnktLWFjdGl2ZTsKICBmb250LXdlaWdodDogcmVzb2x2ZSgibGluayIpOwogIGZvbnQtd2VpZ2h0OiByZXNvbHZlLXNlbGYoKTsKfQ==*/
+/*#css-blocks end*/

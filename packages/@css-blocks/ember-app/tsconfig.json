@@ -1,0 +1,28 @@
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "composite": true,
+    "outDir": "dist",
+    "baseUrl": ".",
+    "noImplicitAny": false,
+    "paths": {
+      "ember-cli/*": ["../ember/src/types/ember-cli"],
+      "*": ["types/*"],
+    },
+    "traceResolution": false
+  },
+  "references": [
+    {"path": "../config"},
+    {"path": "../core"},
+    {"path": "../glimmer"},
+    {"path": "../ember-utils"}
+  ],
+  "include": [
+    "src",
+    "test"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules"
+  ]
+}

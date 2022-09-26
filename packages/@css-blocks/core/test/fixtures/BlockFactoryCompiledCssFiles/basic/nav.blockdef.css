@@ -1,0 +1,27 @@
+@block-syntax-version 1;
+
+:scope {
+  block-id: "7d97e";
+  block-name: nav;
+  block-class: nav-7d97e;
+}
+
+:scope[mode="light"] {
+  block-class: nav-7d97e--light;
+}
+
+:scope[mode="dark"] {
+  block-class: nav-7d97e--dark;
+}
+
+.item {
+  block-class: nav-7d97e__item;
+}
+
+.item[current] {
+  block-class: nav-7d97e__item--current;
+}
+
+.item[promo] {
+  block-class: nav-7d97e__item--promo;
+}

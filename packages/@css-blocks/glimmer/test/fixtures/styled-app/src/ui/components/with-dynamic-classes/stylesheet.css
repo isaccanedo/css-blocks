@@ -1,0 +1,20 @@
+@block h from "./header.css";
+@block t from "./typography.css";
+
+:scope {
+    color: red;
+}
+
+.world {
+    border: 1px solid black;
+}
+
+.world[thick] {
+    border-width: 3px;
+}
+
+.planet {
+    border: 3px groove gray;
+}
+
+@export (h, t);

@@ -1,0 +1,91 @@
+{
+	"folders": [
+		{
+			"path": "packages/@css-blocks/broccoli"
+		},
+		{
+			"path": "packages/@css-blocks/code-style"
+		},
+		{
+			"path": "packages/@css-blocks/core"
+		},
+		{
+			"path": "packages/@css-blocks/glimmer"
+		},
+		{
+			"path": "packages/@css-blocks/jsx"
+		},
+		{
+			"path": "packages/@css-blocks/runtime"
+		},
+		{
+			"path": "packages/@css-blocks/webpack"
+		},
+		{
+			"path": ".",
+			"name": "Workspace Root"
+		},
+		{
+			"path": "packages/@css-blocks/website"
+		},
+		{
+			"path": "packages/@css-blocks/ember-cli"
+		},
+		{
+			"path": "packages/@css-blocks/test-utils"
+		},
+		{
+			"path": "packages/@css-blocks/cli"
+		},
+		{
+			"path": "packages/@css-blocks/vscode"
+		},
+		{
+			"path": "packages/@css-blocks/language-server"
+		},
+		{
+			"path": "packages/@css-blocks/config"
+		},
+		{
+			"path": "packages/@css-blocks/bem-to-blocks"
+		},
+		{
+			"path": "packages/@css-blocks/eyeglass"
+		},
+		{
+			"path": "packages/@css-blocks/ember"
+		},
+		{
+			"path": "packages/@css-blocks/ember-app"
+		},
+		{
+			"path": "packages/@css-blocks/ember-utils"
+		}
+	],
+	"settings": {
+		"cSpell.words": [
+			"COMBINATORS",
+			"Stateful",
+			"Validators",
+			"asdf",
+			"atrule",
+			"fdsa",
+			"pseudoclass",
+			"pseudoclasses",
+			"pseudoelement",
+			"rulesets",
+			"preprocessor",
+			"preprocessors"
+		],
+		"cSpell.ignorePaths": [
+			"**/node_modules/**",
+			"**/vscode-extension/**",
+			"**/.git/**",
+			".vscode",
+			"typings",
+			"**/package.json"
+		],
+		"typescript.tsdk": "Workspace Root/node_modules/typescript/lib",
+		"npm.packageManager": "yarn"
+	}
+}

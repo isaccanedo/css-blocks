@@ -1,0 +1,59 @@
+{
+  "name": "@css-blocks/ember-utils",
+  "version": "1.5.0",
+  "description": "Shared code for CSS Blocks Support for Ember.",
+  "main": "dist/src/index.js",
+  "author": "Chris Eppstein <ceppstein@linkedin.com>",
+  "license": "BSD-2-Clause",
+  "repository": "https://github.com/linkedin/css-blocks/tree/master/packages/%40css-blocks/ember-utils",
+  "homepage": "https://github.com/linkedin/css-blocks/tree/master/packages/%40css-blocks/ember-utils#readme",
+  "keywords": [
+    "css-blocks"
+  ],
+  "files": [
+    "dist",
+    "*.md",
+    "test/mocha.opts"
+  ],
+  "scripts": {
+    "test": "yarn run test:runner",
+    "test:runner": "echo 'tested by the ember addons'",
+    "compile": "tsc --build",
+    "prepare": "rm -rf dist && tsc --build --force",
+    "pretest": "yarn run compile",
+    "posttest": "yarn run lint",
+    "prepublishOnly": "yarn run lintall",
+    "lint": "tslint -t msbuild --project . -c tslint.cli.json",
+    "lintall": "tslint -t msbuild --project . -c tslint.release.json",
+    "lintfix": "tslint -t msbuild --project . -c tslint.cli.json --fix",
+    "coverage": "istanbul cover -i dist/src/**/*.js --dir ./build/coverage node_modules/mocha/bin/_mocha -- dist/test --opts test/mocha.opts",
+    "remap": "remap-istanbul -i build/coverage/coverage.json -o coverage -t html",
+    "watch": "watch 'yarn run test' src test --wait=1"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@css-blocks/code-style": "^1.2.0",
+    "@opticss/util": "^0.7.0",
+    "@types/chai-as-promised": "^7.1.2",
+    "chai-as-promised": "^7.1.1",
+    "opticss": "^0.9.0",
+    "typescript": "~3.8.3",
+    "watch": "^1.0.2"
+  },
+  "dependencies": {
+    "@css-blocks/config": "^1.5.0",
+    "@css-blocks/core": "^1.5.0",
+    "@opticss/template-api": "^0.7.0",
+    "debug": "^4.1.1",
+    "fs-merger": "^3.0.2"
+  },
+  "volta": {
+    "node": "12.2.0",
+    "yarn": "1.21.0"
+  },
+  "engines": {
+    "node": "10.* || >= 12.*"
+  }
+}

@@ -1,0 +1,705 @@
+import { assert } from "chai";
+import { skip, suite, test } from "mocha-typescript";
+
+import { assertError } from "./util/assertError";
+import { BEMProcessor } from "./util/BEMProcessor";
+import cssBlocks = require("./util/postcss-helper");
+import { setupImporting } from "./util/setupImporting";
+
+@suite("Resolves conflicts")
+export class BlockInheritance extends BEMProcessor {
+  @test "results in an error betwixt properties"() {
+    let { imports, config } = setupImporting();
+    imports.registerSource(
+      "a.css",
+      `.foo { border: 3px; }`,
+    );
+
+    let filename = "conflicts.css";
+    let inputCSS = `@block a from "./a.css";
+                    .b {
+                      border: 1px solid red;
+                      border: resolve("a.foo");
+                      border: none;
+                    }`;
+
+    return assertError(
+      cssBlocks.InvalidBlockSyntax,
+      "Resolving border must happen either before or after all other values for border." +
+        " (conflicts.css:4:23)",
+      this.process(filename, inputCSS, config),
+    );
+  }
+
+  @test "results in an error without concrete value"() {
+    let { imports, config } = setupImporting();
+    imports.registerSource(
+      "a.css",
+      `.foo { border: 3px; }`,
+    );
+
+    let filename = "conflicts.css";
+    let inputCSS = `@block a from "./a.css";
+                    .b {
+                      border: resolve("a.foo");
+                    }`;
+
+    return assertError(
+      cssBlocks.InvalidBlockSyntax,
+      "Cannot resolve border without a concrete value." +
+        " (conflicts.css:3:23)",
+      this.process(filename, inputCSS, config),
+    );
+  }
+
+  @test "with a yield"() {
+    let { imports, config } = setupImporting();
+    imports.registerSource(
+      "other.css",
+      `.nav { border: 1px solid black; }`,
+    );
+
+    let filename = "conflicts.css";
+    let inputCSS = `@block other from "./other.css";
+                    .header {
+                      border: none;
+                      border: resolve("other.nav");
+                    }`;
+
+    return this.process(filename, inputCSS, config).then((result) => {
+      imports.assertImported("other.css");
+      assert.deepEqual(
+        result.css.toString(),
+        ".conflicts__header { border: none; }\n" +
+        ".other__nav.conflicts__header { border: 1px solid black; }\n",
+      );
+    });
+  }
+
+  @test "with an override"() {
+    let { imports, config } = setupImporting();
+    imports.registerSource(
+      "other.css",
+      `.nav { border: 1px solid black; color: red; }`,
+    );
+
+    let filename = "conflicts.css";
+    let inputCSS = `@block other from "./other.css";
+                    .header {
+                      width: 100%;
+                      border: resolve("other.nav");
+                      border: none;
+                    }`;
+
+    return this.process(filename, inputCSS, config).then((result) => {
+      imports.assertImported("other.css");
+      assert.deepEqual(
+        result.css.toString(),
+        ".conflicts__header { width: 100%; border: none; }\n" +
+        ".other__nav.conflicts__header { border: none; }\n",
+      );
+    });
+  }
+
+  @test "for states combined with the resolution target"() {
+    let { imports, config } = setupImporting();
+    imports.registerSource(
+      "grid.css",
+      `:scope {
+         display: grid;
+         grid-template-areas: "nav     nav  nav  nav"
+                              "sidebar main main main"; }
+       .main    { grid-area: main;    font-size: 16px;         }
+       .nav     { grid-area: nav;     border: 1px solid black; }
+       .sidebar { grid-area: sidebar; background-color: #ccc;  }
+       :scope[big] .main { font-size: 30px; }
+       :scope[big] > .main { font-size: 40px; }
+       :scope[big] > .main + .main { font-size: 20px; }`,
+    );
+
+    let filename = "conflicts.css";
+    let inputCSS = `@block grid from "./grid.css";
+                    .article {
+                      font-size: 18px;
+                      font-size: resolve("grid.main");
+                    }`;
+
+    return this.process(filename, inputCSS, config).then((result) => {
+      imports.assertImported("grid.css");
+      assert.deepEqual(
+        result.css.toString(),
+        ".conflicts__article { font-size: 18px; }\n" +
+        ".grid__main.conflicts__article { font-size: 16px; }\n" +
+        ".grid--big .grid__main.conflicts__article { font-size: 30px; }\n" +
+        ".grid--big > .grid__main.conflicts__article { font-size: 40px; }\n" +
+        ".grid--big > .grid__main + .grid__main.conflicts__article { font-size: 20px; }\n",
+      );
+    });
+  }
+
+  @test "for states combined with the resolution source"() {
+    let { imports, config } = setupImporting();
+    imports.registerSource(
+      "target.css",
+      `.main    { color: blue; }
+       :scope[hidden] .main { color: transparent; }`,
+    );
+
+    let filename = "conflicts.css";
+    let inputCSS = `@block target from "./target.css";
+                    :scope[happy] .article {
+                      color: green;
+                      color: resolve("target.main");
+                    }`;
+
+    return this.process(filename, inputCSS, config).then((result) => {
+      imports.assertImported("target.css");
+      assert.deepEqual(
+        result.css.toString(),
+        ".conflicts--happy .conflicts__article { color: green; }\n" +
+        ".conflicts--happy .target__main.conflicts__article { color: blue; }\n" +
+        ".target--hidden.conflicts--happy .target__main.conflicts__article,\n" +
+        ".target--hidden .conflicts--happy .target__main.conflicts__article,\n" +
+        ".conflicts--happy .target--hidden .target__main.conflicts__article { color: transparent; }\n",
+      );
+    });
+  }
+
+  @test "for states combined with the resolution source involving child combinators"() {
+    let { imports, config } = setupImporting();
+    imports.registerSource(
+      "target.css",
+      `.main    { color: blue; }
+       :scope[hidden] > .main { color: transparent; }`,
+    );
+
+    let filename = "conflicts.css";
+    let inputCSS = `@block target from "./target.css";
+                    :scope[happy] .article {
+                      color: green;
+                      color: resolve("target.main");
+                    }`;
+
+    return this.process(filename, inputCSS, config).then((result) => {
+      imports.assertImported("target.css");
+      assert.deepEqual(
+        result.css.toString(),
+        ".conflicts--happy .conflicts__article { color: green; }\n" +
+        ".conflicts--happy .target__main.conflicts__article { color: blue; }\n" +
+        ".target--hidden.conflicts--happy > .target__main.conflicts__article,\n" +
+        ".conflicts--happy .target--hidden > .target__main.conflicts__article { color: transparent; }\n",
+      );
+    });
+  }
+
+  @test "for states combined with the resolution source both involving child combinators"() {
+    let { imports, config } = setupImporting();
+    imports.registerSource(
+      "target.css",
+      `.main    { color: blue; }
+       :scope[hidden] > .main { color: transparent; }`,
+    );
+
+    let filename = "conflicts.css";
+    let inputCSS = `@block target from "./target.css";
+                    :scope[happy] > .article {
+                      color: green;
+                      color: resolve("target.main");
+                    }`;
+
+    return this.process(filename, inputCSS, config).then((result) => {
+      imports.assertImported("target.css");
+      assert.deepEqual(
+        result.css.toString(),
+        ".conflicts--happy > .conflicts__article { color: green; }\n" +
+        ".conflicts--happy > .target__main.conflicts__article { color: blue; }\n" +
+        ".target--hidden.conflicts--happy > .target__main.conflicts__article { color: transparent; }\n",
+      );
+    });
+  }
+
+  @test "of short-hand properties conflicting with long-hand properties"() {
+    let { imports, config } = setupImporting();
+    imports.registerSource(
+      "grid.css",
+      `:scope {
+         display: grid;
+         grid-template-areas: "nav     nav  nav  nav"
+                              "sidebar main main main"; }
+       .main    { grid-area: main;    font-size: 16px;         }
+       .nav     { grid-area: nav;     border: 1px solid black; }
+       .sidebar { grid-area: sidebar; background-color: #ccc;  }
+       :scope[big] .main { font-size: 30px; }
+       :scope[big] > .main { font-size: 40px; }
+       :scope[big] > .main + .main { font-size: 20px; }`,
+    );
+
+    let filename = "conflicts.css";
+    let inputCSS = `@block grid from "./grid.css";
+                    .header {
+                      border-bottom: 2px;
+                      border-bottom: resolve("grid.nav");
+                    }
+                    .another-header {
+                      border-width: 3px;
+                      border-width: resolve("grid.nav");
+                    }
+                    .third-header {
+                      border-bottom-width: 3px;
+                      border-bottom-width: resolve("grid.nav");
+                    }`;
+
+    return this.process(filename, inputCSS, config).then((result) => {
+      imports.assertImported("grid.css");
+      assert.deepEqual(
+        result.css.toString(),
+        ".conflicts__header { border-bottom: 2px; }\n" +
+        ".grid__nav.conflicts__header { border-bottom: 1px solid black; }\n" +
+        ".conflicts__another-header { border-width: 3px; }\n" +
+        ".grid__nav.conflicts__another-header { border-width: 1px; }\n" +
+        ".conflicts__third-header { border-bottom-width: 3px; }\n" +
+        ".grid__nav.conflicts__third-header { border-bottom-width: 1px; }\n",
+      );
+    });
+  }
+
+  @test "when the property is repeated all values are copied."() {
+    let { imports, config } = setupImporting();
+    imports.registerSource(
+      "other.css",
+      `.foo { font-size: 10px; font-size: 0.5rem; }
+       .bar { font-size: 99px; font-size: 10rem; }`,
+    );
+
+    let filename = "conflicts.css";
+    let inputCSS = `@block other from "./other.css";
+                    .article {
+                      font-size: resolve("other.foo");
+                      font-size: 18px;
+                      font-size: 2rem;
+                      font-size: resolve("other.bar");
+                    }`;
+
+    return this.process(filename, inputCSS, config).then((result) => {
+      imports.assertImported("other.css");
+      assert.deepEqual(
+        result.css.toString(),
+        ".conflicts__article { font-size: 18px; font-size: 2rem; }\n" +
+        ".other__bar.conflicts__article { font-size: 99px; font-size: 10rem; }\n" +
+        ".other__foo.conflicts__article { font-size: 18px; font-size: 2rem; }\n",
+      );
+    });
+  }
+
+  @test "doesn't concern selectors that don't conflict."() {
+    let { imports, config } = setupImporting();
+    imports.registerSource(
+      "other.css",
+      `.foo { font-size: 10px; }
+       :scope[dark] .foo { color: black; }
+       .bar { font-size: 99px; }
+       :scope[dark] .bar { color: dark-gray; }`,
+    );
+
+    let filename = "conflicts.css";
+    let inputCSS = `@block other from "./other.css";
+                    .article {
+                      font-size: resolve("other.foo");
+                      font-size: 18px;
+                      font-size: resolve("other.bar");
+                    }`;
+
+    return this.process(filename, inputCSS, config).then((result) => {
+      imports.assertImported("other.css");
+      assert.deepEqual(
+        result.css.toString(),
+        ".conflicts__article { font-size: 18px; }\n" +
+        ".other__bar.conflicts__article { font-size: 99px; }\n" +
+        ".other__foo.conflicts__article { font-size: 18px; }\n",
+      );
+    });
+  }
+
+  @test "errors when no selectors conflict."() {
+    let { imports, config } = setupImporting();
+    imports.registerSource(
+      "other.css",
+      `.foo { font-size: 10px; }`,
+    );
+
+    let filename = "conflicts.css";
+    let inputCSS = `@block other from "./other.css";
+                    .article {
+                      border: resolve("other.foo");
+                      border: 1px solid green;
+                    }`;
+
+    return assertError(
+      cssBlocks.InvalidBlockSyntax,
+      "There are no conflicting values for border found in any selectors targeting other.foo." +
+        " (conflicts.css:3:23)",
+      this.process(filename, inputCSS, config),
+    );
+  }
+
+  @test "doesn't create a resolution if the values are the same but it also doesn't error."() {
+    let { imports, config } = setupImporting();
+    imports.registerSource(
+      "other.css",
+      `.nav { border: 1px solid black; }`,
+    );
+
+    let filename = "conflicts.css";
+    let inputCSS = `@block other from "./other.css";
+                    .header {
+                      border: 1px solid black;
+                      border: resolve("other.nav");
+                    }`;
+
+    return this.process(filename, inputCSS, config).then((result) => {
+      imports.assertImported("other.css");
+      assert.deepEqual(
+        result.css.toString(),
+        ".conflicts__header { border: 1px solid black; }\n",
+      );
+    });
+  }
+
+  @test "resolves conflicts against a sub-block"() {
+    let { imports, config } = setupImporting();
+    imports.registerSource(
+      "base.css",
+      `.nav { border: 1px solid black; width: 100%; }
+       .sidebar { color: blue; }`,
+    );
+    imports.registerSource(
+      "other.css",
+      `@block base from "base.css";
+       :scope { extends: base; }
+       .nav { border: 1px solid green; color: red; }`,
+    );
+
+    let filename = "conflicts.css";
+    let inputCSS = `@block other from "./other.css";
+                    .header {
+                      width: 80%;
+                      width: resolve("other.nav");
+                      border: none;
+                      border: resolve("other.nav");
+                      color: green;
+                      color: resolve("other.sidebar");
+                    }`;
+
+    return this.process(filename, inputCSS, config).then((result) => {
+      imports.assertImported("other.css");
+      imports.assertImported("base.css");
+      assert.deepEqual(
+        result.css.toString(),
+        ".conflicts__header { width: 80%; border: none; color: green; }\n" +
+        ".base__sidebar.conflicts__header { color: blue; }\n" +
+        ".other__nav.conflicts__header { border: 1px solid green; }\n" +
+        ".base__nav.conflicts__header { width: 100%; }\n",
+      );
+    });
+  }
+
+  @test "resolves block roots"() {
+    let { imports, config } = setupImporting();
+    imports.registerSource(
+      "other.css",
+      `:scope { border: 1px solid black; width: 100%; }`,
+    );
+
+    let filename = "conflicts.css";
+    let inputCSS = `@block other from "./other.css";
+                    .header {
+                      border: none;
+                      border: resolve("other");
+                      width: 100px;
+                      width: resolve("other:scope");
+                    }`;
+
+    return this.process(filename, inputCSS, config).then((result) => {
+      imports.assertImported("other.css");
+      assert.deepEqual(
+        result.css.toString(),
+        ".conflicts__header { border: none; width: 100px; }\n" +
+        ".other.conflicts__header { width: 100%; }\n" +
+        ".other.conflicts__header { border: 1px solid black; }\n",
+      );
+    });
+  }
+
+  @test "resolves block roots in media queries"() {
+    let { imports, config } = setupImporting();
+    imports.registerSource(
+      "grid.block.css",
+      `:scope {
+        width: 1128px;
+        box-sizing: content-box;
+        padding: 0 30px;
+        display: block;
+        margin: auto;
+        position: relative;
+      }
+      @media (max-width: 1208px) {
+        :scope {
+          display: inline-block;
+          width: calc(100vw - 20px);
+          box-sizing: border-box;
+        }
+      }
+      @media (max-width: 976px) {
+        :scope {
+          padding: 0 18px;
+        }
+      }
+      `,
+    );
+
+    let filename = "header.css";
+    let inputCSS = `
+      @block grid from "./grid.block.css";
+
+      :scope {
+        background: blue;
+      }
+
+      .content {
+        display: flex;
+        display: resolve("grid");
+        height: 100%;
+      }
+
+      .content[width="fixed"] {
+        composes: grid;
+      }
+
+      .content[width="full"] {
+        margin: resolve("grid");
+        margin: 0 24px;
+      }
+    `;
+
+    return this.process(filename, inputCSS, config).then((result) => {
+      imports.assertImported("grid.block.css");
+      assert.deepEqual(
+        result.css.toString(),
+        ".header { background: blue; }\n" +
+        ".header__content { display: flex; height: 100%; }\n" +
+        ".grid.header__content { display: block; }\n" +
+        "@media (max-width: 1208px) {\n" +
+        " .grid.header__content { display: inline-block; }\n" +
+        "}\n" +
+        ".header__content--width-fixed { }\n" +
+        ".header__content--width-full { margin: 0 24px; }\n" +
+        ".grid.header__content--width-full { margin: 0 24px; }\n",
+      );
+    });
+  }
+
+  @test "resolves root states"() {
+    let { imports, config } = setupImporting();
+    imports.registerSource(
+      "other.css",
+      `:scope[foo] { width: 100%; }`,
+    );
+
+    let filename = "conflicts.css";
+    let inputCSS = `@block other from "./other.css";
+                    .header {
+                      width: 100px;
+                      width: resolve("other[foo]");
+                    }`;
+
+    return this.process(filename, inputCSS, config).then((result) => {
+      imports.assertImported("other.css");
+      assert.deepEqual(
+        result.css.toString(),
+        ".conflicts__header { width: 100px; }\n" +
+        ".other--foo.conflicts__header { width: 100%; }\n",
+      );
+    });
+  }
+
+  @test "resolves class states"() {
+    let { imports, config } = setupImporting();
+    imports.registerSource(
+      "other.css",
+      `.asdf[foo] { width: 100%; }`,
+    );
+
+    let filename = "conflicts.css";
+    let inputCSS = `@block other from "./other.css";
+                    .header {
+                      width: 100px;
+                      width: resolve("other.asdf[foo]");
+                    }`;
+
+    return this.process(filename, inputCSS, config).then((result) => {
+      imports.assertImported("other.css");
+      assert.deepEqual(
+        result.css.toString(),
+        ".conflicts__header { width: 100px; }\n" +
+        ".other__asdf--foo.conflicts__header { width: 100%; }\n",
+      );
+    });
+  }
+
+  @test "resolves pseduoelement override"() {
+    let { imports, config } = setupImporting();
+    imports.registerSource(
+      "other.css",
+      `.asdf::before { width: 100%; }`,
+    );
+
+    let filename = "conflicts.css";
+    let inputCSS = `@block other from "./other.css";
+                    .header::before {
+                      width: 100px;
+                      width: resolve("other.asdf");
+                    }`;
+
+    return this.process(filename, inputCSS, config).then((result) => {
+      imports.assertImported("other.css");
+      assert.deepEqual(
+        result.css.toString(),
+        ".conflicts__header::before { width: 100px; }\n" +
+        ".other__asdf.conflicts__header::before { width: 100%; }\n",
+      );
+    });
+  }
+  @test "resolves pseduoelement yield"() {
+    let { imports, config } = setupImporting();
+    imports.registerSource(
+      "other.css",
+      `.asdf::before { width: 100%; }`,
+    );
+
+    let filename = "conflicts.css";
+    let inputCSS = `@block other from "./other.css";
+                    .header::before {
+                      width: resolve("other.asdf");
+                      width: 100px;
+                    }`;
+
+    return this.process(filename, inputCSS, config).then((result) => {
+      imports.assertImported("other.css");
+      assert.deepEqual(
+        result.css.toString(),
+        ".conflicts__header::before { width: 100px; }\n" +
+        ".other__asdf.conflicts__header::before { width: 100px; }\n",
+      );
+    });
+  }
+
+  @test "compatible but different combinators"() {
+    let { imports, config } = setupImporting();
+    imports.registerSource(
+      "target.css",
+      `.adjacent + .adjacent { border: 1px; }
+       .sibling ~ .sibling   { color: blue; }
+       :scope[ancestor] .descendant { float: left; }
+       :scope[parent] > .child { position: relative; }`,
+    );
+
+    let filename = "conflicts.css";
+    let inputCSS = `@block target from "./target.css";
+                    .adjacent + .adjacent { color: green; color: resolve("target.sibling"); }
+                    .sibling ~ .sibling   { border: 2px; border: resolve("target.adjacent"); }
+                    :scope[ancestor] .descendant { position: absolute; position: resolve("target.child"); }
+                    :scope[parent] > .child { float: right; float: resolve("target.descendant"); }`;
+
+    return this.process(filename, inputCSS, config).then((result) => {
+      imports.assertImported("target.css");
+      assert.deepEqual(
+        result.css.toString(),
+        ".conflicts__adjacent + .conflicts__adjacent { color: green; }\n" +
+        ".target__sibling.conflicts__adjacent + .target__sibling.conflicts__adjacent,\n" +
+        ".target__sibling ~ .conflicts__adjacent + .target__sibling.conflicts__adjacent { color: blue; }\n" +
+
+        ".conflicts__sibling ~ .conflicts__sibling { border: 2px; }\n" +
+        ".target__adjacent.conflicts__sibling + .target__adjacent.conflicts__sibling,\n" +
+        ".conflicts__sibling ~ .target__adjacent + .target__adjacent.conflicts__sibling { border: 1px; }\n" +
+
+        ".conflicts--ancestor .conflicts__descendant { position: absolute; }\n" +
+        ".target--parent.conflicts--ancestor > .target__child.conflicts__descendant,\n" +
+        ".conflicts--ancestor .target--parent > .target__child.conflicts__descendant { position: relative; }\n" +
+
+        ".conflicts--parent > .conflicts__child { float: right; }\n" +
+        ".target--ancestor.conflicts--parent > .target__descendant.conflicts__child,\n" +
+        ".target--ancestor .conflicts--parent > .target__descendant.conflicts__child { float: left; }\n",
+      );
+    });
+  }
+
+  @skip
+  @test "handles custom properties and shorthand/longhand conflict resolution somehow"() {
+  }
+
+  @test "for states combined with the resolution source has adjacent selectors"() {
+    let { imports, config } = setupImporting();
+    imports.registerSource(
+      "target.css",
+      `.main    { color: blue; }
+       .main + .main { color: transparent; }`,
+    );
+
+    let filename = "conflicts.css";
+    let inputCSS = `@block target from "./target.css";
+                    :scope[happy] > .article {
+                      color: green;
+                      color: resolve("target.main");
+                    }`;
+
+    return this.process(filename, inputCSS, config).then((result) => {
+      imports.assertImported("target.css");
+      assert.deepEqual(
+        result.css.toString(),
+        ".conflicts--happy > .conflicts__article { color: green; }\n" +
+        ".conflicts--happy > .target__main.conflicts__article { color: blue; }\n" +
+        ".conflicts--happy > .target__main + .target__main.conflicts__article { color: transparent; }\n",
+      );
+    });
+  }
+
+  @test "resolving to your own block is illegal"() {
+    let filename = "conflicts.css";
+    let inputCSS = `:scope[happy] > .article {
+                      color: green;
+                      color: resolve(".bio");
+                    }
+                    :scope[sad] > .bio {
+                      color: blue;
+                    }`;
+
+    return assertError(
+      cssBlocks.InvalidBlockSyntax,
+      "Cannot resolve conflicts with your own block." +
+        " (conflicts.css:3:23)",
+      this.process(filename, inputCSS),
+    );
+  }
+  @test "resolving to your super block is illegal"() {
+    let { imports, config } = setupImporting();
+    imports.registerSource(
+      "super.css",
+      `.main    { color: blue; }`,
+    );
+
+    let filename = "conflicts.css";
+    let inputCSS = `@block super from "super.css";
+                    :scope { extends: super; }
+                    .article {
+                      color: green;
+                      color: resolve("super.main");
+                    }`;
+
+    return assertError(
+      cssBlocks.InvalidBlockSyntax,
+      "Cannot resolve conflicts with ancestors of your own block." +
+        " (conflicts.css:5:23)",
+      this.process(filename, inputCSS, config),
+    );
+  }
+}

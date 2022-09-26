@@ -1,0 +1,5 @@
+@block (enableable-component) from "@css-blocks-fixtures-v2/npm-based-blocks";
+
+:scope {
+  extends: enableable-component;
+}

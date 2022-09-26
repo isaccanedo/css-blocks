@@ -1,0 +1,45 @@
+{
+  "name": "@css-blocks/code-style",
+  "author": "Chris Eppstein",
+  "description": "Configuration and tools to manage the code style of css-blocks.",
+  "license": "BSD-2-Clause",
+  "version": "1.2.0",
+  "main": "configs/tslint.interactive.json",
+  "readme": "README.md",
+  "keywords": [
+    "tslint",
+    "tslint-plugin"
+  ],
+  "scripts": {
+    "compile": "echo 'nothing to build'",
+    "pretest": "yarn run compile",
+    "prepublish": "yarn run compile",
+    "test": "echo 'nothing to test'",
+    "test:runner": "echo 'nothing to test'",
+    "lint": "tslint -t msbuild -p . -c tslint.cli.json",
+    "lintfix": "tslint -t msbuild -p . --fix -c tslint.cli.json",
+    "lintall": "tslint -t msbuild -p . -c tslint.release.json"
+  },
+  "bugs": {
+    "url": "https://github.com/linkedin/css-blocks/issues"
+  },
+  "repository": "https://github.com/linkedin/css-blocks/tree/master/packages/%40css-blocks/code-style",
+  "homepage": "https://github.com/linkedin/css-blocks/tree/master/packages/%40css-blocks/code-style#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@opticss/code-style": "^0.6.0"
+  },
+  "engines": {
+    "node": "10.* || >= 12.*"
+  },
+  "files": [
+    "configs",
+    "*.md"
+  ],
+  "volta": {
+    "node": "12.2.0",
+    "yarn": "1.21.0"
+  }
+}

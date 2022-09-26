@@ -1,0 +1,21 @@
+@export subnav from "./subnav.block.css";
+
+:scope {
+  color: red;
+}
+
+.foo {
+  color: green;
+}
+
+.foo[is-bar] {
+  color: blue;
+}
+
+.foo[isometric="left"] {
+  border-left-width: 1px;
+}
+
+.foo[isometric="right"] {
+  border-right-width: 1px;
+}

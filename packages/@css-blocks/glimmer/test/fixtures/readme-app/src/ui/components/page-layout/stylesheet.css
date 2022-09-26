@@ -1,0 +1,9 @@
+@block grid from "./grid.css";
+:scope { color: red; width: 100vw; }
+:scope[loading] { color: blue }
+.sidebar { float: left; }
+.sidebar[collapsed] { display: none; }
+.main { border-right: 2px groove gray; }
+.recommended { background-color: orange }
+
+@export grid;

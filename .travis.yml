@@ -1,0 +1,30 @@
+if: tag IS blank
+git:
+  depth: 1
+sudo: required
+language: node_js
+
+node_js:
+  - "10"
+  - "12"
+
+env:
+  - CXX=g++-4.8
+
+addons:
+    chrome: stable
+
+before_install:
+  - npm install -g lerna yarn@1.17.3
+  - ./scripts/if-opticss-dev.sh ./scripts/checkout-opticss.sh ../opticss
+  - ./scripts/if-opticss-dev.sh ./scripts/link-to-opticss.js --file ../opticss
+
+install:
+  - lerna bootstrap --registry=https://registry.npmjs.org/
+
+script: lerna run --concurrency 1 test
+
+cache:
+  yarn: true
+  directories:
+    - ~/.npm

@@ -1,0 +1,71 @@
+{
+  "private": true,
+  "name": "@css-blocks/jsx",
+  "version": "1.5.0",
+  "description": "Statically analyzes JSX files for CSS Blocks use.",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "pretest": "yarn run compile",
+    "posttest": "yarn run lint",
+    "test": "yarn run test:runner",
+    "test:runner": "mocha dist/test --recursive --opts test/mocha.opts && yarn run lint",
+    "compile": "tsc --build",
+    "prepublish": "rm -rf dist && yarn run compile && yarn run lintall",
+    "watch": "watch 'yarn run test' './src' './test' --wait=3",
+    "lint": "tslint -t msbuild -c tslint.cli.json --project .",
+    "lintall": "tslint -t msbuild --project . -c tslint.release.json",
+    "lintfix": "tslint -t msbuild -c tslint.cli.json --project . --fix"
+  },
+  "keywords": [
+    "jsx",
+    "preact",
+    "react",
+    "static",
+    "analysis",
+    "CSS Blocks"
+  ],
+  "author": "Adam Miller <ammiller@linkedin.com>",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/linkedin/css-blocks/issues"
+  },
+  "engines": {
+    "node": "10.* || >= 12.*"
+  },
+  "repository": "https://github.com/linkedin/css-blocks/tree/master/packages/%40css-blocks/jsx",
+  "homepage": "https://github.com/linkedin/css-blocks/tree/master/packages/%40css-blocks/jsx#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@css-blocks/code-style": "^1.2.0",
+    "@css-blocks/runtime": "^1.2.0",
+    "@css-blocks/test-utils": "^1.2.0",
+    "babel-core": "^6.25.0",
+    "obj-str": "^1.0.0",
+    "preact": "^8.2.1"
+  },
+  "peerDependencies": {
+    "@css-blocks/runtime": "^0.23.0"
+  },
+  "dependencies": {
+    "@css-blocks/core": "^1.5.0",
+    "@opticss/template-api": "^0.7.0",
+    "@opticss/util": "^0.7.0",
+    "babel-traverse": "7.0.0-beta.3",
+    "babel-types": "7.0.0-beta.3",
+    "babylon": "7.0.0-beta.46",
+    "debug": "^4.1.1",
+    "minimatch": "^3.0.4",
+    "object.values": "^1.0.4",
+    "opticss": "^0.9.0"
+  },
+  "volta": {
+    "node": "12.2.0",
+    "yarn": "1.21.0"
+  }
+}

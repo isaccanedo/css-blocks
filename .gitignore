@@ -1,0 +1,13 @@
+node_modules/
+!packages/@css-blocks/core/test/fixtures/nodeModuleImporter/node_modules
+dist/
+docs/
+coverage/
+build/
+.DS_Store
+lerna-debug.log
+yarn-error.log
+package-lock.json
+.vscode
+jsconfig.json
+*.tsbuildinfo

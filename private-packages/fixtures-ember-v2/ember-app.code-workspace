@@ -1,0 +1,39 @@
+{
+	"folders": [
+		{
+			"path": "../../packages/@css-blocks/ember-utils",
+			"name": "Addon: Ember Support"
+		},
+		{
+			"path": "../../packages/@css-blocks/ember",
+			"name": "Addon: Ember"
+		},
+		{
+			"path": "../../packages/@css-blocks/ember-app",
+			"name": "Addon: Ember App"
+		},
+		{
+			"path": "ember-app",
+			"name": "Fixture: Ember App"
+		},
+		{
+			"path": "ember-addon",
+			"name": "Fixture: Ember Addon"
+		},
+		{
+			"path": "ember-engine",
+			"name": "Fixture: Ember Engine"
+		},
+		{
+			"path": "ember-lazy-engine",
+			"name": "Fixture: Ember Lazy Engine"
+		},
+		{
+			"path": "npm-based-blocks",
+			"name": "Fixture: npm-based-blocks"
+		}
+	],
+	"settings": {
+		"terminal.integrated.cwd": "${workspaceFolder:Fixture: Ember App}"
+	}
+}

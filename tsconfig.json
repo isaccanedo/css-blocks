@@ -1,0 +1,57 @@
+{
+  "include": [ "packages/**/*" ],
+  "exclude": [ "node_modules" ],
+  "compilerOptions": {
+    // Compilation Configuration
+    "lib": ["es2018"],
+    "target": "es2018",
+    "inlineSources": true,
+    "inlineSourceMap": true,
+    "declaration": true,
+    "allowSyntheticDefaultImports": true,
+
+    // Environment Configuration
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+
+    // Enhance Strictness
+    "noImplicitAny": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "noUnusedParameters": true,
+    "allowUnreachableCode": false,
+    "strictNullChecks": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "forceConsistentCasingInFileNames": true,
+    "noUnusedLocals": true,
+    "strictFunctionTypes": true,
+    "alwaysStrict": true,
+    "strictPropertyInitialization": true,
+    "strict": true,
+
+    // output options
+    "preserveConstEnums": false,
+    "declarationMap": true,
+    "newLine": "LF",
+    "traceResolution": false,
+    "module": "commonjs",
+    "jsx": "preserve",
+
+    "baseUrl": ".",
+    "paths": {
+      "perfectionist": [
+        "types-local/perfectionist"
+      ],
+      "regexpu-core": [
+        "types-local/regexpu-core"
+      ],
+      "inline-source-map-comment": [
+        "types-local/inline-source-map-comment"
+      ],
+      "loader-utils": [
+        "types-local/loader-utils"
+      ]
+    }
+  }
+}

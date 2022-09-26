@@ -1,0 +1,11 @@
+:scope {
+  color: blue;
+}
+
+.pretty {
+  color: red;
+}
+
+.pretty[color=yellow] {
+  color: yellow;
+}

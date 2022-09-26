@@ -1,0 +1,24 @@
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "composite": true,
+    "outDir": "dist",
+    "baseUrl": "dist",
+    "paths": {
+      "sass": ["../../../node_modules/@types/node-sass"]
+    }
+  },
+  "references": [
+    {"path": "../bem-to-blocks"},
+    {"path": "../core"},
+    {"path": "../config"}
+  ],
+  "include": [
+    "src",
+    "test"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules"
+  ]
+}

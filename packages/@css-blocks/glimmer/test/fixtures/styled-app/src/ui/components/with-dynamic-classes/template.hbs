@@ -1,0 +1,7 @@
+<div>
+  <h1 h:scope>Hello, <span block:class={{style-if isWorld 'world'}} h:class="emphasis" t:class="underline" block:thick={{eq isThick 1}} h:style={{textStyle}}>World</span>!</h1>
+  <div block:class={{style-if isWorld 'world' 'planet'}}>World</div>
+  <div block:class={{style-unless isWorld 'world' 'planet'}}>World</div>
+  <div block:class={{style-unless isWorld 'world'}}>World</div>
+  <h2 h:scope={{isWorld}}>Dynamic Scope</h2>
+</div>

@@ -1,0 +1,6 @@
+:scope {
+  color: red;
+}
+[active] {
+  color: yellow;
+}

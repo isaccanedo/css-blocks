@@ -1,0 +1,62 @@
+{
+  "private": true,
+  "name": "@css-blocks-fixtures-v2/ember-app",
+  "version": "1.5.0",
+  "description": "Simple app with CSS Blocks templates and stylesheets that consumes addons and engines that use CSS Blocks.",
+  "repository": "",
+  "license": "BSD-2-Clause",
+  "author": "",
+  "directories": {
+    "doc": "doc",
+    "test": "tests"
+  },
+  "scripts": {
+    "build": "yarn pretest && ember build",
+    "build:debug": "yarn pretest && node --inspect-brk ./node_modules/.bin/ember build",
+    "start": "yarn pretest && ember serve",
+    "start:debug": "yarn pretest && node --inspect-brk ./node_modules/.bin/ember serve",
+    "pretest": "cd ../../../packages/@css-blocks/ember && yarn compile && cd ../ember-app && yarn compile",
+    "test": "ember test",
+    "clean:debug": "rm -rf DEBUG"
+  },
+  "dependencies": {
+    "@css-blocks-fixtures-v2/ember-addon": "^1.5.0",
+    "@css-blocks-fixtures-v2/ember-engine": "^1.5.0",
+    "@css-blocks-fixtures-v2/ember-lazy-engine": "^1.5.0",
+    "@css-blocks-fixtures-v2/npm-based-blocks": "^1.2.0",
+    "@css-blocks/ember": "^1.5.0",
+    "@css-blocks/ember-app": "^1.5.0",
+    "broccoli-debug": "^0.6.5",
+    "ember-cli-babel": "^7.7.3",
+    "ember-cli-htmlbars": "^5.2.0",
+    "ember-engines": "^0.8.5"
+  },
+  "devDependencies": {
+    "@ember/jquery": "^0.6.0",
+    "@ember/optional-features": "^0.7.0",
+    "broccoli-asset-rev": "^3.0.0",
+    "ember-ajax": "^5.0.0",
+    "ember-cli": "~3.17.0",
+    "ember-cli-app-version": "^3.2.0",
+    "ember-cli-dependency-checker": "^3.1.0",
+    "ember-cli-inject-live-reload": "^1.8.2",
+    "ember-cli-sri": "^2.1.1",
+    "ember-cli-uglify": "^2.1.0",
+    "ember-data": "~3.16.0",
+    "ember-export-application-global": "^2.0.0",
+    "ember-load-initializers": "^2.0.0",
+    "ember-maybe-import-regenerator": "^0.1.6",
+    "ember-qunit": "^4.4.1",
+    "ember-resolver": "^5.0.1",
+    "ember-source": "~3.11.1",
+    "ember-welcome-page": "^4.0.0",
+    "loader.js": "^4.7.0",
+    "qunit-dom": "^0.8.4"
+  },
+  "engines": {
+    "node": "10.* || >= 12.*"
+  },
+  "ember": {
+    "edition": "octane"
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "name": "@css-blocks/runtime",
+  "version": "1.2.0",
+  "description": "Browser runtime for computing dynamic classnames with css-blocks.",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "pretest": "yarn run compile",
+    "posttest": "yarn run lint",
+    "test": "yarn run test:runner",
+    "watch": "watch 'yarn run test' './src' './test' --wait=1",
+    "compile": "tsc --build",
+    "prepublish": "rm -rf dist && yarn run compile && yarn run lintall",
+    "test:runner": "mocha dist/test --opts test/mocha.opts",
+    "lint": "tslint -t msbuild -c tslint.cli.json --project .",
+    "lintall": "tslint -t msbuild --project . -c tslint.release.json",
+    "lintfix": "tslint -t msbuild -c tslint.cli.json --project . --fix"
+  },
+  "keywords": [
+    "@css-blocks/core"
+  ],
+  "engines": {
+    "node": "10.* || >= 12.*"
+  },
+  "author": "Chris Eppstein <chris@eppsteins.net>",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/linkedin/css-blocks/issues"
+  },
+  "repository": "https://github.com/linkedin/css-blocks/tree/master/packages/%40css-blocks/runtime",
+  "homepage": "https://github.com/linkedin/css-blocks/tree/master/packages/%40css-blocks/runtime#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@css-blocks/code-style": "^1.2.0"
+  },
+  "volta": {
+    "node": "12.2.0",
+    "yarn": "1.21.0"
+  }
+}

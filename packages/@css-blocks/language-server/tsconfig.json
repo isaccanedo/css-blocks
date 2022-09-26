@@ -1,0 +1,14 @@
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "composite": true,
+    "baseUrl": "dist",
+    "target": "es2018",
+    "outDir": "dist",
+    "rootDir": "src",
+    "lib": ["es2018"]
+  },
+  "include": ["src", "src/test"],
+  "exclude": ["dist", "node_modules", ".vscode-test"],
+  "references": [{ "path": "../core" }]
+}
